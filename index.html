@@ -1,94 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
     <title>Password Strength Checker</title>
     <style>
-        body {
-            background-color: rgb(203, 237, 211);
-        }
-        .container {
-            width: 300px;
-            height: 400px;
-            background-color: rgb(128, 225, 128);
-            text-align: center;
-            border: 1px solid;
-            border-radius: 20px;
-            padding: 20px;
-        }
-        #strength {
-            font-weight: bold;
-        }
-        .weak {
-            color: red;
-        }
-        .medium {
-            color: orange;
-        }
-        .strong {
-            color: green;
-        }
+      body {
+        background-color: rgb(203, 237, 211); /* Your original body background color */
+        height: 100vh; /* Ensure the body takes full height of the viewport */
+        margin: 0; /* Remove default margin */
+      }
+
+      .container {
+        width: 300px;
+        height: 400px; /* Fixed container height */
+      }
+
+      #strength {
+        font-weight: bold;
+      }
+
+      .weak {
+        color: red;
+      }
+
+      .medium {
+        color: orange;
+      }
+
+      .strong {
+        color: green;
+      }
     </style>
-</head>
-<body>
-    <div class="container mt-5">
-        <h2 class="mt-5" style="font-size: 24px;">Password Strength Checker</h2>
-        <input type="password" id="password" class="form-control mt-3" placeholder="Enter your password" />
-        <p id="strength" class="mt-5">Password strength: <span id="strengthText">None</span></p>
+  </head>
+  <body>
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+      <div class="card p-4" style="width: 300px; height:350px; background-color: rgb(128, 225, 128); border-radius: 20px;">
+        <h2 class="text-center mt-3" style="font-size: 24px">Password Strength Checker</h2>
+        <input
+          type="password"
+          id="password"
+          class="form-control mt-4"
+          placeholder="Enter your password"
+        />
+        <p id="strength" class="mt-5">
+          Password strength: <span id="strengthText">None</span>
+        </p>
+      </div>
     </div>
-    
+
     <script>
-        var passwordInput = document.getElementById('password');
-        var strengthText = document.getElementById('strengthText');
-    
-        // Function to check if password contains a digit
-        function containsDigit(password) {
-            return [...password].some(char => !isNaN(parseInt(char)) && char !== ' ');
+      var passwordInput = document.getElementById("password");
+      var strengthText = document.getElementById("strengthText");
+
+      // Function to check if password contains a digit
+      function containsDigit(password) {
+        return [...password].some(
+          (char) => !isNaN(parseInt(char)) && char !== " "
+        );
+      }
+
+      // Function to check if password contains a special character
+      function containsSpecialCharacter(password) {
+        const specialCharacters = '!@#$%^&*(),.?":{}|<>';
+        for (let i = 0; i < password.length; i++) {
+          if (specialCharacters.includes(password[i])) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      function checkPasswordStrength(password) {
+        var strength = "Weak";
+        var strengthClass = "weak";
+
+        // Check for weak password (length < 6)
+        if (password.length < 6) {
+          strength = "Weak";
+          strengthClass = "weak";
+        }
+        // Check for medium password (length >= 6, and contains at least one digit)
+        else if (
+          password.length >= 6 &&
+          containsDigit(password) &&
+          !containsSpecialCharacter(password)
+        ) {
+          strength = "Medium";
+          strengthClass = "medium";
+        }
+        // Check for strong password (length >= 8, contains a digit, and contains a special character)
+        else if (
+          password.length >= 8 &&
+          containsDigit(password) &&
+          containsSpecialCharacter(password)
+        ) {
+          strength = "Strong";
+          strengthClass = "strong";
+        }
+        // If the password is between 6 and 7 characters long, we consider it medium if it contains digits
+        else if (password.length >= 6 && containsDigit(password)) {
+          strength = "Medium";
+          strengthClass = "medium";
         }
 
-        // Function to check if password contains a special character
-        function containsSpecialCharacter(password) {
-            const specialCharacters = "!@#$%^&*(),.?\":{}|<>";
-            for (let i = 0; i < password.length; i++) {
-                if (specialCharacters.includes(password[i])) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    
-        function checkPasswordStrength(password) {
-            var strength = 'Weak';
-            var strengthClass = 'weak';
+        // Update strength display
+        strengthText.textContent = strength;
+        strengthText.className = strengthClass;
+      }
 
-            // Check for weak password
-            if (password.length < 6) {
-                strength = 'Weak';
-                strengthClass = 'weak';
-            }
-            // Check for medium password (length >= 6, and contains at least one digit)
-            else if (password.length >= 6 && containsDigit(password) && !containsSpecialCharacter(password)) {
-                strength = 'Medium';
-                strengthClass = 'medium';
-            }
-            // Check for strong password (length >= 8, contains a digit, and contains a special character)
-            else if (password.length >= 8 && containsDigit(password) && containsSpecialCharacter(password)) {
-                strength = 'Strong';
-                strengthClass = 'strong';
-            }
-
-            // Update strength display
-            strengthText.textContent = strength;
-            strengthText.className = strengthClass;
-        }
-    
-        passwordInput.addEventListener('input', function() {
-            var password = passwordInput.value;
-            checkPasswordStrength(password);
-        });
+      passwordInput.addEventListener("input", function () {
+        var password = passwordInput.value;
+        checkPasswordStrength(password);
+      });
     </script>
-</body>
+  </body>
 </html>
